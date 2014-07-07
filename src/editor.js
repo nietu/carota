@@ -26,7 +26,7 @@ exports.create = function(element) {
 
     element.innerHTML =
         '<div class="carotaSpacer">' +
-            '<canvas width="100" height="100" class="carotaEditorCanvas" style="position: absolute;"></canvas>' +
+            '<canvas width="100" height="100" class="carotaEditorCanvas" id="texteditorcanvas" ></canvas>' +
         '</div>' +
         '<div class="carotaTextArea" style="overflow: hidden; position: absolute; height: 0;">' +
             '<textarea autocorrect="off" autocapitalize="off" spellcheck="false" tabindex="0" ' +
@@ -294,7 +294,12 @@ exports.create = function(element) {
 
         var docHeight = doc.frame.bounds().h;
 
-        var dpr = Math.max(1, window.devicePixelRatio || 1);
+        if (element.title === "scaled") {
+          var dpr = 10;
+        }
+        else {
+          var dpr = Math.max(1, window.devicePixelRatio || 1);
+        }
         
         var logicalWidth = Math.max(doc.frame.actualWidth(), element.clientWidth),
             logicalHeight = element.clientHeight;
@@ -321,7 +326,9 @@ exports.create = function(element) {
         ctx.clearRect(0, 0, logicalWidth, logicalHeight);
         ctx.translate(0, -element.scrollTop);
         doc.draw(ctx, rect(0, element.scrollTop, logicalWidth, logicalHeight));
-        doc.drawSelection(ctx, selectDragStart || (document.activeElement === textArea));
+        if (element.title !== "scaled") {
+          doc.drawSelection(ctx, selectDragStart || (document.activeElement === textArea));
+        }
     };
 
     dom.handleEvent(element, 'scroll', paint);
